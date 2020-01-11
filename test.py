@@ -1,3 +1,9 @@
+x = 1231233211
+print('{:,}'.format(x).replace(',', ' '))
+
+# print("Units destroyed: {players[0]!r:/>30}".format(players = ['1', '2', '3']))
+
+'''
 # Testing alphabet with corresponding numbers
 a = list()
 num = 4
@@ -14,6 +20,7 @@ a.append('{'+str(num)+'}')
 print(a)
 
 print(int('ee', 17))
+'''
 # a=14
 # if a in lst:
 #     print(a)
