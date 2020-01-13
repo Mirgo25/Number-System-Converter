@@ -1,5 +1,5 @@
-x = 1231233211
-print('{:,}'.format(x).replace(',', ' '))
+# x = 1231233211
+# print('{:,}'.format(x).replace(',', ' '))
 
 # print("Units destroyed: {players[0]!r:/>30}".format(players = ['1', '2', '3']))
 

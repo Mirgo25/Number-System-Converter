@@ -1,6 +1,10 @@
 alphabet = list(map(chr, [i for i in range(ord('A'), ord('Z') + 1)]))
 alph_assoc = dict(enumerate(alphabet, 10))
 print(alph_assoc)
+alph_assoc_inv = dict(zip(alph_assoc.values(), alph_assoc.keys()))
+print(alph_assoc_inv)
+flag: bool = False
+ch: str = ""
 # Список для остатков от деления на основу системы счисления
 result = []
 
@@ -40,9 +44,49 @@ def other_to_dec(num, base):
     if 2 <= base <= 36:
         return int(num, base)
     else:
-        print("Don't understand")
+        if '.' in num:          # Если вещественное число
 
 
+
+            print('Dot is here!!!!')
+
+
+
+        else:                   # Если целое число
+
+            def num_from_letter(x):  # Функция, которая конвертирует букву в число
+                if x in alph_assoc.values():
+                    number = str(alph_assoc_inv[x])
+                    return number
+                else:
+                    return x
+
+            def del_brackets(x):  # Функция, которая удаляет из списка скобки и записывает, что было внутри, 1-им числом
+                global flag
+                global ch
+                if '{' == x:
+                    ch = ''
+                    flag = True
+                    # return None
+                elif flag == True:
+                    if '}' == x:
+                        flag = False
+                        return ch
+                    else:
+                        ch = ch + x
+                        # return None
+                else:
+                    return x
+
+            num = map(num_from_letter, num)               # Конвертируем все буквы в числа
+            num = filter(None, map(del_brackets, num))    # Удаляем скобки из списка
+            num = list(map(int, num))                     # Преобразуем в тип данных int
+            num.reverse()
+            index_num = list(range(0, len(num)))        # Список индексов цифр в числе
+            num = list(map(lambda i, number: number * pow(base, i), index_num, num))
+            return sum(num)
+            # for number in num:
+            #     num[i+1] = number * pow(base, i+1)
 # ------------------------------------------------------------------------------------
 
 
@@ -58,7 +102,7 @@ def switch(num, base_in, base_out):
         return func(num, base_in)
 # ------------------------------------------------------------------------------------
 
-
+# ---------------------------< Главный цикл программы >-----------------------------------
 while True:
     try:
         num = input("Enter a number: ")
@@ -69,3 +113,4 @@ while True:
         break
     except ValueError:
         print("It is not a number! Try again.")
+# ------------------------------------------------------------------------------------
