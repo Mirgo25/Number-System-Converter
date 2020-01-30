@@ -7,13 +7,14 @@ print(alph_assoc_inv)
 flag: bool = False
 trigger: bool = True
 ch: str = ""
-num = '135489785.000001'  # 135489785.68
-base = 35      # 35
+num = '135.734538'  # 135489785.68
+base = 10      # 35
 result, fractResult = [], ['.']
 
-
+'''
 # ----< Фунция преобразования из десятичной системы счисления в другую >---------------
 def dec_to_other(num, base):
+    """Фунция преобразования из десятичной системы счисления в другую."""
     global trigger
 
     if trigger == True:
@@ -42,6 +43,7 @@ def dec_to_other(num, base):
             trigger = False
         else:
             trigger = False
+            fractResult.clear()
             # num = int(num)
     num = int(float(num))
     quot = num // base
@@ -72,10 +74,10 @@ def dec_to_other(num, base):
 # ------------------------------------------------------------------------------------
 
 print(dec_to_other(num, base))
+'''
 
 
 '''
-
 def num_from_letter(x):  # Функция, которая конвертирует букву в число
     if x in alph_assoc.values():
         number = str(alph_assoc_inv[x])

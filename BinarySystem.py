@@ -4,19 +4,47 @@ print(alph_assoc)
 alph_assoc_inv = dict(zip(alph_assoc.values(), alph_assoc.keys()))
 print(alph_assoc_inv)
 flag: bool = False
+trigger: bool = True
 ch: str = ""
-# Список для остатков от деления на основу системы счисления
-result = []
+# Список для остатков от деления на основу системы счисления \ Список для целых остатков от умножения на основу системы счисления
+result, fractResult = [], ['.']
 
 
-# ----< Фунция преобразования из десятичной системы счисления в другую >---------------
 def dec_to_other(num, base):
-    if '.' in num:
-        num = float(num)
-    else:
-        num = int(num)
+    """Фунция преобразования из десятичной системы счисления в другую."""
+    global trigger
+
+    if trigger == True:
+        if '.' in num:
+            i = 0
+            fractNum = num.split('.')[1]
+            fractNum = float(fractNum)/pow(10, len(fractNum))
+            while True:
+                product = fractNum * base
+                intPart = int(product)     # Целая часть числа от умножения на вещественное число (оно идет в результат)
+                fractNum = float('{:.6f}'.format(product - intPart))    # Дробная часть числа от умножения на вещ. число \
+                                                                        # 21.08 - 21.00 = 0.0799999999999983 \
+                                                                        # поэтому использую float('{:.5f}'.format(product - intPart))
+                i += 1
+                if intPart in alph_assoc:
+                    fractResult.append(alph_assoc[intPart])
+                elif intPart > max(alph_assoc.keys()):
+                    # если число выходит за диапазон алфавита, оно берется в фиг. скобки,\
+                    # и считается отдельным числом в выбранной системе счисления
+                    fractResult.append('{' + str(intPart) + '}')
+                else:
+                    fractResult.append(intPart)
+                if product - intPart == 0.0 or i == 10:            # Условие завершения цикла
+                    break
+            # num = float(num)
+            trigger = False
+        else:
+            trigger = False
+            fractResult.clear()
+            # num = int(num)
+    num = int(float(num))
     quot = num // base
-    rest = int(num % base)
+    rest = num % base
     if rest in alph_assoc:
         result.append(alph_assoc[rest])
     elif rest > max(alph_assoc.keys()):
@@ -36,14 +64,15 @@ def dec_to_other(num, base):
             result.append(quot)
 
         result.reverse()
+        result.extend(fractResult)
         return ''.join(map(str, result))
     else:
         return dec_to_other(quot, base)
-# ------------------------------------------------------------------------------------
 
 
-# ----< Фунция преобразования из одной системы счисления в десятичную >---------------
+
 def other_to_dec(num, base):
+    """Фунция преобразования из одной системы счисления в десятичную."""
 
     def num_from_letter(x):  # Функция, которая конвертирует букву в число
         if x in alph_assoc.values():
@@ -52,7 +81,7 @@ def other_to_dec(num, base):
         else:
             return x
 
-    def del_brackets(x):  # Функция, которая удаляет из списка скобки и записывает, что было внутри, 1-им числом
+    def del_brackets(x):    # Функция, которая удаляет из списка скобки и записывает, что было внутри, 1-им числом.
         global flag
         global ch
         if '{' == x:
@@ -94,24 +123,22 @@ def other_to_dec(num, base):
             index_num = list(range(0, len(num)))        # Список индексов цифр в числе
             num = list(map(lambda i, number: number * pow(base, i), index_num, num))
             return sum(num)
-# ------------------------------------------------------------------------------------
 
 
-# ---------------------------< Аналог switch-case >-----------------------------------
-def switch(num, base_in, base_out):
-    switcher = {
-        10: dec_to_other
-    }
-    func = switcher.get(base_in, lambda num, base_in: other_to_dec(num, base_in))
-    if base_in == 10:
-        return func(num, base_out)
-    elif base_in != 10 and base_out != 10:
+def other_to_other(num, base_in, base_out):
+    """
+    Функция преобразования чисел с одной системы счисления(СС) в другую.
 
-        print("There must be function \"OTHER_TO_OTHER\"")
-    # return function other_to_other
+    :param num: str - Число, которое нужно преобразовать.
+    :param base_in: int - Основа СС, в которой введено число.
+    :param base_out: int - Основа СС, в которую надо преобразовать число.
+    """
+    if base_in == 10:           # Сработает если перевести в одну и ту же СС
+        return dec_to_other(num, base_out)
+    elif base_out == 10:
+        return other_to_dec(num, base_in)
     else:
-        return func(num, base_in)
-# ------------------------------------------------------------------------------------
+        return dec_to_other(str(other_to_dec(num, base_in)), base_out)
 
 
 # ---------------------------< Главный цикл программы >-----------------------------------
@@ -121,7 +148,7 @@ while True:
         base_in = int(input("Enter a number system of entered number: "))
         base_out = int(input("Enter a base of number system you want to convert your number: "))
         print('The number {} in {} number system is {} in number system with base of {}'.format
-                        (num,  base_in,   switch(num, base_in, base_out),         base_out))
+                        (num,  base_in,   other_to_other(num, base_in, base_out),         base_out))
         break
     except ValueError:
         print("It is not a number! Try again.")
