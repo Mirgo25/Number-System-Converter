@@ -1,8 +1,8 @@
 alphabet = list(map(chr, [i for i in range(ord('A'), ord('Z') + 1)]))
 alph_assoc = dict(enumerate(alphabet, 10))
-print(alph_assoc)
+# print(alph_assoc)
 alph_assoc_inv = dict(zip(alph_assoc.values(), alph_assoc.keys()))
-print(alph_assoc_inv)
+# print(alph_assoc_inv)
 flag: bool = False
 trigger: bool = True
 ch: str = ""
@@ -65,10 +65,11 @@ def dec_to_other(num, base):
 
         result.reverse()
         result.extend(fractResult)
-        return ''.join(map(str, result))
+        output = ''.join(map(str, result))
+        result.clear()
+        return output
     else:
         return dec_to_other(quot, base)
-
 
 
 def other_to_dec(num, base):
@@ -133,23 +134,25 @@ def other_to_other(num, base_in, base_out):
     :param base_in: int - Основа СС, в которой введено число.
     :param base_out: int - Основа СС, в которую надо преобразовать число.
     """
-    if base_in == 10:           # Сработает если перевести в одну и ту же СС
+    if base_in == 10:           # Также сработает если перевести в одну и ту же СС
         return dec_to_other(num, base_out)
     elif base_out == 10:
         return other_to_dec(num, base_in)
+    elif base_in == base_out:
+        return num
     else:
         return dec_to_other(str(other_to_dec(num, base_in)), base_out)
 
-
-# ---------------------------< Главный цикл программы >-----------------------------------
-while True:
-    try:
-        num = input("Enter a number: ")
-        base_in = int(input("Enter a number system of entered number: "))
-        base_out = int(input("Enter a base of number system you want to convert your number: "))
-        print('The number {} in {} number system is {} in number system with base of {}'.format
-                        (num,  base_in,   other_to_other(num, base_in, base_out),         base_out))
-        break
-    except ValueError:
-        print("It is not a number! Try again.")
-# ------------------------------------------------------------------------------------
+if __name__ == '__main__':
+    # ---------------------------< Главный цикл программы >-----------------------------------
+    while True:
+        try:
+            num = input("Enter a number: ")
+            base_in = int(input("Enter a number system of entered number: "))
+            base_out = int(input("Enter a base of number system you want to convert your number: "))
+            print('The number {} in {} number system is {} in number system with base of {}'.format
+                            (num,  base_in,   other_to_other(num, base_in, base_out),         base_out))
+            # break
+        except ValueError:
+            print("It is not a number! Try again.")
+    # ------------------------------------------------------------------------------------
